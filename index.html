@@ -1,597 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#10b981" />
-  <title>تطبيق تفاعلي للقسمة</title>
-
-  <!-- Tailwind (CDN) -->
-  <script src="https://cdn.tailwindcss.com">
-    // Back to portal
-    $("btnBack")?.addEventListener("click", () => {
-      const ref = document.referrer || "";
-      try {
-        if (ref) {
-          const u = new URL(ref);
-          if (u.host === window.location.host) {
-            window.location.href = ref;
-            return;
-          }
-        }
-      } catch {}
-      const portalUrl = (document.body.getAttribute("data-portal-url") || "").trim();
-      if (portalUrl) {
-        window.location.href = portalUrl;
-        return;
-      }
-      if (window.history.length > 1) {
-        window.history.back();
-        return;
-      }
-      toast("لا يوجد صفحة سابقة للرجوع إليها.");
-    });
-
-  </script>
-
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{ --ring: rgba(16,185,129,.35); }
-    body{ font-family:'Tajawal',system-ui,-apple-system,Segoe UI,Roboto,Arial; }
-    .glass{ background: rgba(255,255,255,.72); backdrop-filter: blur(10px); }
-    .shadow-soft{ box-shadow: 0 16px 50px rgba(2,6,23,.10); }
-    .blob{ filter: blur(40px); opacity:.55; }
-    .focus-ring:focus{ outline: none; box-shadow: 0 0 0 4px var(--ring); }
-    .no-select{ user-select:none; }
-    /* scrollbar */
-    ::-webkit-scrollbar{ width: 10px; height: 10px; }
-    ::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.18); border-radius: 999px; }
-    ::-webkit-scrollbar-thumb:hover{ background: rgba(15,23,42,.28); }
-  </style>
-</head>
-
-<body data-portal-url="" class="min-h-screen bg-gradient-to-b from-emerald-50 via-sky-50 to-amber-50 text-slate-800">
-  <!-- Decorative blobs -->
-  <div aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="blob absolute -top-20 -right-24 w-96 h-96 rounded-full bg-emerald-300"></div>
-    <div class="blob absolute top-52 -left-24 w-[28rem] h-[28rem] rounded-full bg-sky-300"></div>
-    <div class="blob absolute bottom-[-6rem] right-12 w-[30rem] h-[30rem] rounded-full bg-amber-300"></div>
-  </div>
-
-  <!-- Top bar -->
-  <header class="sticky top-0 z-30 border-b border-white/40 bg-white/55 backdrop-blur">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
-      <div class="flex items-center gap-3">
-        <img src="./assets/logo.jpg" alt="شعار الملتقى" class="w-12 h-12 rounded-2xl object-cover ring-1 ring-black/5 shadow-sm bg-white" />
-        <div class="leading-tight">
-          <h1 class="text-lg sm:text-xl font-extrabold">تطبيق تفاعلي للقسمة</h1>
-          <p class="text-xs sm:text-sm text-slate-600">اختر نشاطًا، وافتحه مباشرة — مع بحث ومفضلة ومتابعة للزيارات.</p>
-        </div>
-      </div>
-
-      <div class="ms-auto flex items-center gap-2">
-        
-        <button id="btnBack" class="btn inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm hover:shadow-soft" title="الرجوع للبوابة">
-          <span class="text-base">🏠</span>
-          <span class="hidden sm:inline">الرجوع للبوابة</span>
-        </button>
-<button id="btnHelp" class="focus-ring rounded-xl px-3 py-2 text-sm font-bold bg-white/70 hover:bg-white shadow-sm border border-white/60">
-          إرشادات
-        </button>
-        <a href="#links" class="focus-ring rounded-xl px-3 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">
-          ابدأ الآن
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main class="mx-auto max-w-6xl px-4 py-8">
-    <!-- Hero -->
-    <section class="relative overflow-hidden rounded-3xl border border-white/55 glass shadow-soft p-6 sm:p-8">
-      <div class="flex flex-col md:flex-row md:items-center gap-6">
-        <div class="flex-1">
-          <div class="inline-flex items-center gap-2 rounded-full bg-emerald-600/10 text-emerald-800 px-3 py-1 text-xs font-bold">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            لوحة روابط تعليمية — القسمة
-          </div>
-
-          <h2 class="mt-3 text-2xl sm:text-3xl font-extrabold">
-            كل ألعاب وتمارين القسمة في مكان واحد ✨
-          </h2>
-
-          <p class="mt-2 text-slate-700 leading-relaxed">
-            استخدم البحث أو اختر تصنيفًا، ثم افتح التطبيق الذي تريده. يمكنك إضافة أي رابط للمفضلة ⭐
-            وسيحفظ التطبيق تقدمك على نفس الجهاز تلقائيًا.
-          </p>
-
-          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="rounded-2xl bg-white/75 border border-white/60 p-3">
-              <div class="text-xs text-slate-500 font-bold">عدد الروابط</div>
-              <div id="statTotal" class="text-xl font-extrabold mt-1">—</div>
-            </div>
-            <div class="rounded-2xl bg-white/75 border border-white/60 p-3">
-              <div class="text-xs text-slate-500 font-bold">تمت زيارتها</div>
-              <div id="statVisited" class="text-xl font-extrabold mt-1">—</div>
-            </div>
-            <div class="rounded-2xl bg-white/75 border border-white/60 p-3">
-              <div class="text-xs text-slate-500 font-bold">المفضلة</div>
-              <div id="statFav" class="text-xl font-extrabold mt-1">—</div>
-            </div>
-            <div class="rounded-2xl bg-white/75 border border-white/60 p-3">
-              <div class="text-xs text-slate-500 font-bold">آخر زيارة</div>
-              <div id="statLast" class="text-sm font-extrabold mt-2 leading-tight">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="md:w-[22rem]">
-          <div class="rounded-3xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white p-5 shadow-soft">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-white/15 flex items-center justify-center text-xl">➗</div>
-              <div>
-                <div class="font-extrabold">نصيحة سريعة</div>
-                <div class="text-sm text-white/90">ابدأ بالقسمة على ٢ بالتمثيل الحسي، ثم انتقل للتدريبات.</div>
-              </div>
-            </div>
-            <div class="mt-4 rounded-2xl bg-white/10 p-4 text-sm leading-relaxed">
-              جرّب ترتيب التعلم:
-              <div class="mt-2 flex flex-wrap gap-2">
-                <span class="px-3 py-1 rounded-full bg-white/15">تمثيل حسي</span>
-                <span class="px-3 py-1 rounded-full bg-white/15">توزيع بالتساوي</span>
-                <span class="px-3 py-1 rounded-full bg-white/15">تدريب + تغذية راجعة</span>
-                <span class="px-3 py-1 rounded-full bg-white/15">تحقق بالضرب</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Controls -->
-    <section id="links" class="mt-8">
-      <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-        <div class="flex-1">
-          <label class="block text-sm font-extrabold text-slate-700 mb-2" for="q">بحث سريع</label>
-          <div class="relative">
-            <input id="q" class="focus-ring w-full rounded-2xl border border-white/60 bg-white/70 px-4 py-3 pr-11 shadow-soft"
-              placeholder="ابحث بالاسم أو الوصف أو التصنيف…"
-              autocomplete="off" />
-            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">🔎</div>
-          </div>
-        </div>
-
-        <div class="lg:w-[18rem]">
-          <label class="block text-sm font-extrabold text-slate-700 mb-2" for="filter">تصفية</label>
-          <select id="filter" class="focus-ring w-full rounded-2xl border border-white/60 bg-white/70 px-4 py-3 shadow-soft">
-            <option value="all">كل الروابط</option>
-            <option value="fav">المفضلة ⭐</option>
-            <option value="visited">تمت زيارتها ✅</option>
-            <option value="unvisited">لم تُزر بعد</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mt-4">
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-          <div>
-            <div class="text-sm font-extrabold text-slate-700 mb-2">التصنيفات</div>
-            <div id="chips" class="flex flex-wrap gap-2"></div>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <button id="btnReset" class="focus-ring rounded-2xl px-4 py-2 bg-white/70 hover:bg-white border border-white/60 font-extrabold text-sm shadow-soft">
-              إعادة ضبط
-            </button>
-            <button id="btnClear" class="focus-ring rounded-2xl px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm shadow-soft">
-              مسح التقدّم
-            </button>
-          </div>
-        </div>
-
-        <p id="resultHint" class="mt-3 text-sm text-slate-600"></p>
-      </div>
-
-      <!-- Cards grid -->
-      <div id="grid" class="mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- Help modal -->
-    <div id="helpModal" class="fixed inset-0 z-50 hidden">
-      <div class="absolute inset-0 bg-black/35"></div>
-      <div class="absolute inset-0 flex items-end sm:items-center justify-center p-4">
-        <div class="w-full max-w-2xl rounded-3xl bg-white shadow-soft border border-white/60 overflow-hidden">
-          <div class="p-5 sm:p-6 border-b bg-slate-50">
-            <div class="flex items-center gap-2">
-              <div class="text-xl">📌</div>
-              <h3 class="text-lg font-extrabold">إرشادات سريعة</h3>
-              <button id="btnCloseHelp" class="ms-auto focus-ring rounded-xl px-3 py-2 text-sm font-bold bg-white hover:bg-white border border-slate-200">
-                إغلاق
-              </button>
-            </div>
-          </div>
-          <div class="p-5 sm:p-6 text-sm leading-relaxed text-slate-700">
-            <ul class="list-disc pr-5 space-y-2">
-              <li>اضغط <b>فتح</b> لزيارة النشاط في تبويب جديد.</li>
-              <li>اضغط ⭐ لإضافة الرابط إلى <b>المفضلة</b>.</li>
-              <li>سيتم حفظ <b>الزيارات</b> و<b>المفضلة</b> تلقائيًا على نفس الجهاز (بدون أي تسجيل دخول).</li>
-              <li>استخدم البحث والتصنيفات لتصل بسرعة لنوع النشاط الذي تريده.</li>
-              <li>زر <b>مسح التقدّم</b> يمسح الزيارات والمفضلة من هذا الجهاز فقط.</li>
-            </ul>
-
-            <div class="mt-4 rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
-              <div class="font-extrabold text-emerald-800">ملاحظة</div>
-              <div class="mt-1 text-emerald-800/90">
-                الروابط تعمل عبر HTTPS وتفتح من GitHub Pages. إذا رغبت تضيف روابط جديدة، فقط حدّث قائمة الروابط داخل ملف <code>index.html</code>.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 hidden">
-      <div class="rounded-2xl bg-slate-900 text-white px-4 py-3 shadow-soft text-sm font-bold">
-        تم ✅
-      </div>
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="mt-10 border-t border-white/40 bg-white/55 backdrop-blur">
-    <div class="mx-auto max-w-6xl px-4 py-5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-      <div class="font-extrabold text-slate-700">أ/ فاطمة هزازي</div>
-      <div class="text-slate-500 hidden sm:block">•</div>
-      <div class="font-bold text-slate-600">ملتقى معلمي ومعلمات الرياضيات</div>
-      <div class="text-slate-500 hidden sm:block">•</div>
-      <div class="font-bold text-slate-600">ملتقى التعليم التفاعلي</div>
-      <div class="ms-auto text-xs text-slate-500">© <span id="year"></span></div>
-    </div>
-  </footer>
-
-<script>
-/* ========= Data ========= */
-const LINKS = [
-  {
-    id: "balance",
-    title: "لعبة الميزان — القسمة على ٢ (تمثيل حسي)",
-    desc: "تنمية فهم القسمة على ٢ عبر توزيع الفواكه بالتساوي على كفتي الميزان.",
-    url: "https://123456789fh.github.io/The-Balance-Game/",
-    category: "القسمة على ٢",
-    tags: ["لعبة", "تمثيل حسي", "توزيع بالتساوي"]
-  },
-  {
-    id: "activity",
-    title: "مفهوم القسمة — التوزيع بالتساوي",
-    desc: "نشاط تفاعلي يرسّخ مفهوم القسمة باعتبارها توزيعًا بالتساوي.",
-    url: "https://123456789fh.github.io/Activity/",
-    category: "مفهوم القسمة",
-    tags: ["نشاط", "مفهوم", "توزيع بالتساوي"]
-  },
-  {
-    id: "package2",
-    title: "باقة ألعاب القسمة على ٢",
-    desc: "مجموعة ألعاب متنوعة لتثبيت القسمة على ٢ بمستويات مختلفة.",
-    url: "https://123456789fh.github.io/Game-Package/",
-    category: "القسمة على ٢",
-    tags: ["باقة ألعاب", "تدرّج", "مرح"]
-  },
-  {
-    id: "assistant",
-    title: "مساعد القسمة للأطفال",
-    desc: "فهم بصري وعملي عبر اللعب + تدريب وتغذية راجعة + شرح الطرح المتكرر والتحقق بالضرب.",
-    url: "https://123456789fh.github.io/Assistant-in-division/",
-    category: "مهارات القسمة",
-    tags: ["تغذية راجعة", "طرح متكرر", "تحقق بالضرب"]
-  },
-  {
-    id: "facts",
-    title: "علاقة القسمة بالضرب",
-    desc: "شبكة حقائق مترابطة توضح كيف نتحقق من القسمة باستخدام الضرب.",
-    url: "https://123456789fh.github.io/Networks-interconnected-facts/",
-    category: "علاقة القسمة بالضرب",
-    tags: ["تحقق", "حقائق", "ضرب وقسمة"]
-  },
-  {
-    id: "div2",
-    title: "تعلم القسمة على ٢",
-    desc: "توزيع بالتساوي بين شخصين + أمثلة تفاعلية + خيارات إجابة + شرح فوري خطوة بخطوة.",
-    url: "https://123456789fh.github.io/Division-by-2/",
-    category: "القسمة على ٢",
-    tags: ["شرح", "خطوة بخطوة", "مستويات"]
-  },
-  {
-    id: "maze2",
-    title: "لعبة المتاهة — القسمة على ٢",
-    desc: "متاهة تعليمية ممتعة لتطبيق القسمة على ٢ مع تحديات سريعة.",
-    url: "https://123456789fh.github.io/Maze-Game-/",
-    category: "القسمة على ٢",
-    tags: ["متاهة", "تحدي", "لعبة"]
-  },
-  {
-    id: "div89",
-    title: "القسمة على ٨ و٩",
-    desc: "تدريبات تفاعلية على القسمة على ٨ و٩ بأسئلة متنوعة.",
-    url: "https://123456789fh.github.io/Division-by-9-8/",
-    category: "قواعد القسمة",
-    tags: ["تدريب", "٨", "٩"]
-  },
-  {
-    id: "div67",
-    title: "القسمة على ٦ و٧",
-    desc: "تدريبات تفاعلية على القسمة على ٦ و٧ بأسئلة متنوعة.",
-    url: "https://123456789fh.github.io/Division-by-7-6/",
-    category: "قواعد القسمة",
-    tags: ["تدريب", "٦", "٧"]
-  },
-  {
-    id: "review7",
-    title: "مراجعة فصل ٧",
-    desc: "مراجعة مركّزة لمهارات الفصل السابع مع تمارين متنوعة.",
-    url: "https://123456789fh.github.io/Review/",
-    category: "مراجعة",
-    tags: ["مراجعة", "تمارين", "تقويم"]
-  },
-  {
-    id: "test1",
-    title: "اختبار ١ — القسمة",
-    desc: "اختبار تدريبي سريع لقياس إتقان مهارات القسمة.",
-    url: "https://123456789fh.github.io/Training/",
-    category: "اختبارات",
-    tags: ["اختبار", "قياس", "تدريب"]
-  }
-];
-
-/* ========= Storage ========= */
-const KEY = "division_links_state_v1";
-function loadState(){
-  try{
-    const raw = localStorage.getItem(KEY);
-    if(!raw) return { visited:{}, fav:{} };
-    const obj = JSON.parse(raw);
-    return { visited: obj.visited || {}, fav: obj.fav || {} };
-  }catch(e){
-    return { visited:{}, fav:{} };
-  }
-}
-function saveState(state){
-  localStorage.setItem(KEY, JSON.stringify(state));
-}
-
-/* ========= Helpers ========= */
-const arDigits = (n) => String(n).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-const formatDateAr = (ts) => {
-  if(!ts) return "—";
-  try{
-    const d = new Date(ts);
-    const s = d.toLocaleString("ar-SA", { weekday:"short", year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
-    return s;
-  }catch(e){ return "—"; }
-};
-
-function toast(msg="تم ✅"){
-  const el = document.getElementById("toast");
-  el.querySelector("div").textContent = msg;
-  el.classList.remove("hidden");
-  clearTimeout(window.__t);
-  window.__t = setTimeout(()=> el.classList.add("hidden"), 1600);
-}
-
-function copy(text){
-  navigator.clipboard.writeText(text).then(()=>toast("تم النسخ ✅")).catch(()=>toast("تعذر النسخ"));
-}
-
-/* ========= UI State ========= */
-let state = loadState();
-let activeCategory = "الكل";
-
-/* ========= DOM ========= */
-const q = document.getElementById("q");
-const filter = document.getElementById("filter");
-const grid = document.getElementById("grid");
-const chips = document.getElementById("chips");
-const hint = document.getElementById("resultHint");
-
-function buildChips(){
-  const cats = ["الكل", ...Array.from(new Set(LINKS.map(x=>x.category)))];
-  chips.innerHTML = "";
-  cats.forEach(cat=>{
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = chipClass(cat === activeCategory);
-    btn.textContent = cat;
-    btn.addEventListener("click", ()=>{
-      activeCategory = cat;
-      buildChips();
-      render();
-    });
-    chips.appendChild(btn);
-  });
-}
-
-function chipClass(active){
-  return [
-    "focus-ring no-select rounded-full px-4 py-2 text-sm font-extrabold border shadow-soft",
-    active ? "bg-emerald-600 text-white border-emerald-600" : "bg-white/70 hover:bg-white border-white/60 text-slate-700"
-  ].join(" ");
-}
-
-function updateStats(){
-  const total = LINKS.length;
-  const visited = Object.keys(state.visited || {}).length;
-  const fav = Object.keys(state.fav || {}).length;
-  const last = state.lastVisited || null;
-
-  document.getElementById("statTotal").textContent = arDigits(total);
-  document.getElementById("statVisited").textContent = arDigits(visited);
-  document.getElementById("statFav").textContent = arDigits(fav);
-  document.getElementById("statLast").textContent = formatDateAr(last);
-
-  document.getElementById("year").textContent = new Date().getFullYear();
-}
-
-function isVisited(id){ return !!state.visited[id]; }
-function isFav(id){ return !!state.fav[id]; }
-
-function toggleFav(id){
-  if(isFav(id)) delete state.fav[id];
-  else state.fav[id] = Date.now();
-  saveState(state);
-  updateStats();
-  render();
-}
-
-function markVisited(id){
-  state.visited[id] = Date.now();
-  state.lastVisited = Date.now();
-  saveState(state);
-  updateStats();
-  render();
-}
-
-function openLink(item){
-  markVisited(item.id);
-  window.open(item.url, "_blank", "noopener,noreferrer");
-}
-
-function matches(item, query){
-  if(!query) return true;
-  const hay = (item.title + " " + item.desc + " " + item.category + " " + (item.tags||[]).join(" ")).toLowerCase();
-  return hay.includes(query.toLowerCase());
-}
-
-function applyFilter(items){
-  const f = filter.value;
-  if(f === "fav") return items.filter(x=>isFav(x.id));
-  if(f === "visited") return items.filter(x=>isVisited(x.id));
-  if(f === "unvisited") return items.filter(x=>!isVisited(x.id));
-  return items;
-}
-
-function applyCategory(items){
-  if(activeCategory === "الكل") return items;
-  return items.filter(x=>x.category === activeCategory);
-}
-
-function render(){
-  const query = q.value.trim();
-  let items = LINKS.slice();
-  items = applyCategory(items);
-  items = applyFilter(items);
-  items = items.filter(x=>matches(x, query));
-
-  // Hint
-  const txt = `يعرض الآن: ${arDigits(items.length)} من ${arDigits(LINKS.length)} رابط`;
-  hint.textContent = txt;
-
-  grid.innerHTML = "";
-  if(items.length === 0){
-    grid.innerHTML = `
-      <div class="sm:col-span-2 xl:col-span-3">
-        <div class="rounded-3xl border border-white/60 bg-white/70 p-6 shadow-soft text-center">
-          <div class="text-3xl">🔎</div>
-          <div class="mt-2 font-extrabold">لا توجد نتائج مطابقة</div>
-          <div class="mt-1 text-sm text-slate-600">جرّب تقليل كلمات البحث أو اختر “كل الروابط”.</div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  items.forEach(item=>{
-    const card = document.createElement("div");
-    const visited = isVisited(item.id);
-    const fav = isFav(item.id);
-
-    card.className = "rounded-3xl border border-white/60 bg-white/70 shadow-soft overflow-hidden hover:translate-y-[-2px] transition-transform";
-    card.innerHTML = `
-      <div class="p-5">
-        <div class="flex items-start gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center text-xl shadow-sm">➗</div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <h3 class="font-extrabold text-base leading-snug">${item.title}</h3>
-              ${visited ? `<span class="px-2 py-1 rounded-full text-xs font-extrabold bg-emerald-600/10 text-emerald-800 border border-emerald-100">تمت زيارتها ✅</span>` : ``}
-            </div>
-            <div class="mt-1 text-sm text-slate-700 leading-relaxed">${item.desc}</div>
-            <div class="mt-3 flex flex-wrap gap-2">
-              <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-slate-900/5 border border-white/60">${item.category}</span>
-              ${(item.tags||[]).slice(0,3).map(t=>`<span class="px-3 py-1 rounded-full text-xs font-bold bg-white/70 border border-white/60">${t}</span>`).join("")}
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 grid grid-cols-3 gap-2">
-          <button class="btnOpen focus-ring col-span-2 rounded-2xl px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold">
-            فتح
-          </button>
-
-          <button class="btnFav focus-ring rounded-2xl px-3 py-3 bg-white/80 hover:bg-white border border-white/60 font-extrabold">
-            ${fav ? "★" : "☆"}
-          </button>
-
-          <button class="btnCopy focus-ring col-span-2 rounded-2xl px-4 py-3 bg-white/80 hover:bg-white border border-white/60 font-extrabold">
-            نسخ الرابط
-          </button>
-
-          <button class="btnMark focus-ring rounded-2xl px-3 py-3 bg-white/80 hover:bg-white border border-white/60 font-extrabold">
-            ✓
-          </button>
-        </div>
-
-        <div class="mt-3 text-xs text-slate-500 break-all">${item.url}</div>
-      </div>
-    `;
-
-    card.querySelector(".btnOpen").addEventListener("click", ()=> openLink(item));
-    card.querySelector(".btnFav").addEventListener("click", ()=> toggleFav(item.id));
-    card.querySelector(".btnCopy").addEventListener("click", ()=> copy(item.url));
-    card.querySelector(".btnMark").addEventListener("click", ()=>{
-      markVisited(item.id);
-      toast("تم تسجيل الزيارة ✅");
-    });
-
-    grid.appendChild(card);
-  });
-}
-
-function resetUI(){
-  q.value = "";
-  filter.value = "all";
-  activeCategory = "الكل";
-  buildChips();
-  render();
-}
-
-document.getElementById("btnReset").addEventListener("click", resetUI);
-document.getElementById("btnClear").addEventListener("click", ()=>{
-  if(confirm("هل تريد مسح الزيارات والمفضلة من هذا الجهاز؟")){
-    state = { visited:{}, fav:{} };
-    localStorage.removeItem(KEY);
-    updateStats();
-    render();
-    toast("تم مسح التقدّم ✅");
-  }
-});
-
-q.addEventListener("input", ()=> render());
-filter.addEventListener("change", ()=> render());
-
-/* ========= Help modal ========= */
-const help = document.getElementById("helpModal");
-document.getElementById("btnHelp").addEventListener("click", ()=> help.classList.remove("hidden"));
-document.getElementById("btnCloseHelp").addEventListener("click", ()=> help.classList.add("hidden"));
-help.addEventListener("click", (e)=>{ if(e.target === help) help.classList.add("hidden"); });
-
-/* ========= Init ========= */
-buildChips();
-updateStats();
-render();
-</script>
-</body>
-</html>
